@@ -1,0 +1,139 @@
+# Vendored from https://github.com/withcoral/coral/tree/main/sources/community/remotive
+# Install: coral source add --file coral/remotive.manifest.yaml
+# Docs: https://withcoral.com/docs/reference/community-sources
+
+name: remotive
+version: 0.1.0
+dsl_version: 3
+backend: http
+description: >-
+  Remote job listings from Remotive.com. No authentication required.
+  Data is delayed 24 hours. The API recommends at most 4 requests per day.
+base_url: "https://remotive.com/api"
+test_queries:
+  - SELECT * FROM remotive.jobs LIMIT 1
+  - SELECT title, company_name, category FROM remotive.jobs WHERE category = 'Software Development' LIMIT 5
+tables:
+  - name: jobs
+    description: |
+      Remote job listings from Remotive. Filter locally by category (e.g. Software Development,
+      Marketing) or keyword search. Data updates approximately every 24 hours.
+    guide: |
+      Each row is one remote job listing. Use `category` to filter by job
+      category (e.g. 'Software Development', 'Marketing', 'Design') and `search` for
+      full-text keyword matching using ILIKE (e.g. `WHERE search ILIKE '%python%'`).
+    fetch_limit_default: 20
+    request:
+      method: GET
+      path: /remote-jobs
+    response:
+      rows_path:
+        - jobs
+    columns:
+      - name: id
+        type: Int64
+        nullable: false
+        expr:
+          kind: path
+          path:
+            - id
+      - name: title
+        type: Utf8
+        nullable: false
+        expr:
+          kind: path
+          path:
+            - title
+      - name: company_name
+        type: Utf8
+        nullable: false
+        expr:
+          kind: path
+          path:
+            - company_name
+      - name: company_logo_url
+        type: Utf8
+        nullable: true
+        expr:
+          kind: path
+          path:
+            - company_logo
+      - name: category
+        type: Utf8
+        nullable: true
+        expr:
+          kind: path
+          path:
+            - category
+      - name: tags
+        type: Utf8
+        nullable: true
+        expr:
+          kind: join_array
+          path:
+            - tags
+      - name: job_type
+        type: Utf8
+        nullable: true
+        expr:
+          kind: path
+          path:
+            - job_type
+      - name: publication_date
+        type: Timestamp
+        nullable: true
+        expr:
+          kind: format_timestamp
+          input: iso8601
+          expr:
+            kind: template
+            template: "{{expr.val}}Z"
+            values:
+              val:
+                kind: path
+                path:
+                  - publication_date
+      - name: candidate_required_location
+        type: Utf8
+        nullable: true
+        expr:
+          kind: path
+          path:
+            - candidate_required_location
+      - name: salary
+        type: Utf8
+        nullable: true
+        expr:
+          kind: path
+          path:
+            - salary
+      - name: url
+        type: Utf8
+        nullable: false
+        expr:
+          kind: path
+          path:
+            - url
+      - name: search
+        type: Utf8
+        nullable: true
+        expr:
+          kind: template
+          template: "{{expr.title}} {{expr.company_name}} {{expr.tags}} {{expr.category}}"
+          values:
+            title:
+              kind: path
+              path:
+                - title
+            company_name:
+              kind: path
+              path:
+                - company_name
+            tags:
+              kind: join_array
+              path:
+                - tags
+            category:
+              kind: path
+              path:
+                - category
