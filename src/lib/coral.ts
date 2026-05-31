@@ -17,6 +17,7 @@ export const REMOTIVE_JOBS_SELECT = `
 `.trim();
 
 function resolveCoralExecutable(): string {
+  // @ts-ignore - turbopackIgnore: true
   return process.env.CORAL_BIN ?? 'coral';
 }
 

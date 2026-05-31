@@ -45,7 +45,7 @@ export default async function AdminDashboardPage() {
               No users yet. Users appear here after they message the Telegram bot.
             </p>
           ) : (
-            users.map((user) => (
+            users.map((user: any) => (
               <details
                 key={user.id}
                 className="group rounded-xl border border-zinc-200 bg-white shadow-sm transition-all overflow-hidden"
@@ -135,7 +135,7 @@ export default async function AdminDashboardPage() {
                         <p className="text-sm text-zinc-500 italic">No applications logged yet.</p>
                       ) : (
                         <div className="space-y-3">
-                          {user.applications.map((app) => (
+                          {user.applications.map((app: any) => (
                             <div key={app.id} className="p-3 rounded-lg border border-zinc-100 bg-zinc-50">
                               <div className="flex justify-between items-start mb-1">
                                 <p className="text-sm font-semibold text-zinc-900">{app.jobTitle}</p>
