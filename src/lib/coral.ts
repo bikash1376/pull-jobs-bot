@@ -7,8 +7,6 @@
  * @see https://github.com/withcoral/coral/tree/main/sources/community/remotive
  */
 import { spawn } from 'node:child_process';
-import { homedir, platform } from 'node:os';
-import { join } from 'node:path';
 import { generateText } from 'ai';
 import { chatModel } from '@/lib/ai';
 
@@ -19,13 +17,7 @@ export const REMOTIVE_JOBS_SELECT = `
 `.trim();
 
 function resolveCoralExecutable(): string {
-  if (process.env.CORAL_BIN) {
-    return process.env.CORAL_BIN;
-  }
-  if (platform() === 'win32') {
-    return join(homedir(), '.local', 'bin', 'coral.exe');
-  }
-  return 'coral';
+  return process.env.CORAL_BIN ?? 'coral';
 }
 
 /**

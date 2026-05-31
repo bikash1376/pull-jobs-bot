@@ -1,6 +1,7 @@
 import { UTApi } from "uploadthing/server";
 
-export const utapi = new UTApi({
-  apiKey: process.env.UPLOADTHING_SECRET,
-  appId: process.env.UPLOADTHING_APP_ID,
-});
+/** 
+ * Automatically picks up UPLOADTHING_SECRET and UPLOADTHING_APP_ID (legacy) 
+ * or UPLOADTHING_TOKEN (v7) from environment variables.
+ */
+export const utapi = new UTApi();
